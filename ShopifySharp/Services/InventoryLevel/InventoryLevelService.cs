@@ -60,6 +60,21 @@ namespace ShopifySharp
         }
 
         /// <summary>
+        /// Adjusts the given <see cref="InventoryLevel"/>.
+        /// </summary>
+        /// <param name="updatedInventoryLevel">The updated <see cref="InventoryLevel"/></param>
+        /// <param name="disconnectIfNecessary">Whether inventory for any previously connected locations will be set to 0 and the locations disconnected. This property is ignored when no fulfillment service is involved.</param>
+        /// <returns>The updated <see cref="InventoryLevel"/></returns>
+        public virtual async Task<InventoryLevel> AdjustAsync(InventoryLevelAdjust adjustInventoryLevel, bool disconnectIfNecessary = false)
+        {
+            var req = PrepareRequest($"inventory_levels/adjust.json");
+            var body = adjustInventoryLevel.ToDictionary();
+            body.Add("disconnect_if_necessary", disconnectIfNecessary);
+            JsonContent content = new JsonContent(body);
+            return await ExecuteRequestAsync<InventoryLevel>(req, HttpMethod.Post, content, "inventory_level");
+        }
+
+        /// <summary>
         /// Connect an inventory item to a location
         /// </summary>
         /// <param name="inventoryItemId">The ID of the inventory item</param>
